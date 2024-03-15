@@ -1,6 +1,6 @@
 ﻿namespace TRMDesktopUI.EventModels
 {
-  public class LogOnEvent
-  {
-  }
+	public class LogOnEvent
+	{
+	}
 }

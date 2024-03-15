@@ -2,14 +2,14 @@
 
 namespace TRMDesktopUI.Views
 {
-  /// <summary>
-  /// Interaction logic for UserDisplayView.xaml
-  /// </summary>
-  public partial class UserDisplayView : UserControl
-  {
-    public UserDisplayView()
-    {
-      InitializeComponent();
-    }
-  }
+	/// <summary>
+	/// Interaction logic for UserDisplayView.xaml
+	/// </summary>
+	public partial class UserDisplayView : UserControl
+	{
+		public UserDisplayView()
+		{
+			InitializeComponent();
+		}
+	}
 }

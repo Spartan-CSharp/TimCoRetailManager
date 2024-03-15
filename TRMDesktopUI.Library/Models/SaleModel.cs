@@ -2,8 +2,8 @@
 
 namespace TRMDesktopUI.Library.Models
 {
-  public class SaleModel
-  {
-    public List<SaleDetailModel> SaleDetails { get; set; } = new List<SaleDetailModel>();
-  }
+	public class SaleModel
+	{
+		public List<SaleDetailModel> SaleDetails { get; set; } = new List<SaleDetailModel>();
+	}
 }
