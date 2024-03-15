@@ -4,14 +4,8 @@ namespace TRMDesktopUI.ViewModels
 {
 	public class StatusInfoViewModel : Screen
 	{
-		public string Header
-		{
-			get; private set;
-		}
-		public string Message
-		{
-			get; private set;
-		}
+		public string Header { get; private set; } = string.Empty;
+		public string Message { get; private set; } = string.Empty;
 
 		public void UpdateMessage(string header, string message)
 		{

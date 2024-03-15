@@ -1,10 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[spProduct_GetById]
-    @Id int
+	@Id INT
 AS
-begin
-    set nocount on;
+BEGIN
+	SET NOCOUNT ON;
 
-    select Id, ProductName, [Description], RetailPrice, QuantityInStock, IsTaxable, ProductImage
-	from dbo.Product
-	where Id = @Id;
-end
+	SELECT [Id], [ProductName], [Description], [RetailPrice], [QuantityInStock], [IsTaxable], [ProductImage]
+	FROM [dbo].[Product]
+	WHERE [Id] = @Id;
+END

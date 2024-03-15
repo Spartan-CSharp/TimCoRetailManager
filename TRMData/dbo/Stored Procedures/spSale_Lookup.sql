@@ -1,11 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[spSale_Lookup]
-    @CashierId nvarchar(128),
-    @SaleDate datetime2
+	@CashierId NVARCHAR(128),
+	@SaleDate DATETIME2
 AS
-begin
-    set nocount on;
+BEGIN
+	SET NOCOUNT ON;
 
-    select Id
-    from dbo.Sale
-    where CashierId = @CashierId and SaleDate = @SaleDate;
-end
+	SELECT [Id]
+	FROM [dbo].[Sale]
+	WHERE [CashierId] = @CashierId AND [SaleDate] = @SaleDate;
+END

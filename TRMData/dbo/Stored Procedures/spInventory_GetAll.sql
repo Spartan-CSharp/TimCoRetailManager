@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[spInventory_GetAll]
 AS
-begin
-	set nocount on;
+BEGIN
+	SET NOCOUNT ON;
 
-	select [ProductId], [Quantity], [PurchasePrice], [PurchaseDate]
-	from dbo.Inventory;
-end
+	SELECT [ProductId], [Quantity], [PurchasePrice], [PurchaseDate]
+	FROM [dbo].[Inventory];
+END

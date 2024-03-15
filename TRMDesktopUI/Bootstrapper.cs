@@ -55,7 +55,7 @@ namespace TRMDesktopUI
 #if DEBUG
 			builder.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 #else
-            builder.AddJsonFile("appsettings.Production.json", optional: true, reloadOnChange: true);
+			builder.AddJsonFile("appsettings.Production.json", optional: true, reloadOnChange: true);
 #endif
 			return builder.Build();
 		}
@@ -87,7 +87,7 @@ namespace TRMDesktopUI
 
 		protected override void OnStartup(object sender, StartupEventArgs e)
 		{
-			DisplayRootViewFor<ShellViewModel>();
+			DisplayRootViewForAsync<ShellViewModel>();
 		}
 
 		protected override object GetInstance(Type service, string key)

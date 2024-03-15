@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[spInventory_Insert]
-	@ProductId int,
-	@Quantity int,
-	@PurchasePrice money,
-	@PurchaseDate datetime2
+	@ProductId INT,
+	@Quantity INT,
+	@PurchasePrice MONEY,
+	@PurchaseDate DATETIME2
 AS
-begin
-	set nocount on;
+BEGIN
+	SET NOCOUNT ON;
 
-	insert into dbo.Inventory(ProductId, Quantity, PurchasePrice, PurchaseDate)
-	values (@ProductId, @Quantity, @PurchasePrice, @PurchaseDate);
-end
+	INSERT INTO [dbo].[Inventory] ([ProductId], [Quantity], [PurchasePrice], [PurchaseDate])
+	VALUES (@ProductId, @Quantity, @PurchasePrice, @PurchaseDate);
+END

@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[spUser_Insert]
-	@Id nvarchar(128),
-	@FirstName nvarchar(50),
-	@LastName nvarchar(50),
-	@EmailAddress nvarchar(256)
+	@Id NVARCHAR(128),
+	@FirstName NVARCHAR(50),
+	@LastName NVARCHAR(50),
+	@EmailAddress NVARCHAR(256)
 AS
-begin
-	set nocount on;
+BEGIN
+	SET NOCOUNT ON;
 
-	insert into dbo.[User] (Id, FirstName, LastName, EmailAddress)
-	values (@Id, @FirstName, @LastName, @EmailAddress);
-end
+	INSERT INTO [dbo].[User] ([Id], [FirstName], [LastName], [EmailAddress])
+	VALUES (@Id, @FirstName, @LastName, @EmailAddress);
+END

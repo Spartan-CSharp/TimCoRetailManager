@@ -4,10 +4,8 @@ namespace TRMDesktopUI.Models
 {
 	public class CartItemDisplayModel : INotifyPropertyChanged
 	{
-		public ProductDisplayModel Product
-		{
-			get; set;
-		}
+		public ProductDisplayModel Product { get; set; } = new ProductDisplayModel();
+
 		private int _quantityInCart;
 
 		public int QuantityInCart
@@ -32,7 +30,8 @@ namespace TRMDesktopUI.Models
 			}
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
+
 		public void CallPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

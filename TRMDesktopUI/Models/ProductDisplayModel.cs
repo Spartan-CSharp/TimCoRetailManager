@@ -4,22 +4,11 @@ namespace TRMDesktopUI.Models
 {
 	public class ProductDisplayModel : INotifyPropertyChanged
 	{
-		public int Id
-		{
-			get; set;
-		}
-		public string ProductName
-		{
-			get; set;
-		}
-		public string Description
-		{
-			get; set;
-		}
-		public decimal RetailPrice
-		{
-			get; set;
-		}
+		public int Id { get; set; }
+		public string ProductName { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty;
+		public decimal RetailPrice { get; set; }
+
 		private int _quantityInStock;
 
 		public int QuantityInStock
@@ -35,12 +24,10 @@ namespace TRMDesktopUI.Models
 			}
 		}
 
-		public bool IsTaxable
-		{
-			get; set;
-		}
+		public bool IsTaxable { get; set; }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
+
 		public void CallPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
