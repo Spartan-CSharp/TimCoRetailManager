@@ -5,7 +5,7 @@ At the end of the Build a TimCo Retail Manager App Course Series, Tim Corey invi
 
 - [x] Create a new public repository in GitHub
 - [x] Lay out the road map in the README.md file
-- [ ] Import the code as it was at the end of the Build a TimCo Retail Manager App Course Series
+- [x] Import the code as it was at the end of the Build a TimCo Retail Manager App Course Series
 - [ ] Update the .editorconfig file my idiosyncratic preferences and run code cleanup
 - [ ] Update all the projects from .NET 5.0 to .NET 8.0
 - [ ] Refactoring phase 1: create a common library for components common between the API and the UIs
