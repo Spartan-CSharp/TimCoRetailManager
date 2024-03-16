@@ -36,9 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{CEEB99
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRMCommon.Library", "TRMCommon.Library\TRMCommon.Library.csproj", "{D6983C40-E300-4727-9A2A-85ADAFED974B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMDesktopUI.Library", "TRMDesktopUI.Library\TRMDesktopUI.Library.csproj", "{D8966EBB-9617-4186-97C1-E768E49B16E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRMDesktopUI.Library", "TRMDesktopUI.Library\TRMDesktopUI.Library.csproj", "{D8966EBB-9617-4186-97C1-E768E49B16E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMPortal.Library", "TRMPortal.Library\TRMPortal.Library.csproj", "{8BB95449-F5C4-4EA0-A273-FD706DBD8CF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRMPortal.Library", "TRMPortal.Library\TRMPortal.Library.csproj", "{8BB95449-F5C4-4EA0-A273-FD706DBD8CF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

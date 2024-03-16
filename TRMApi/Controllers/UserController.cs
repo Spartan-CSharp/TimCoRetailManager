@@ -28,6 +28,7 @@ namespace TRMApi.Controllers
 			string EmailAddress,
 			string Password);
 
+		[Authorize]
 		[HttpGet]
 		public UserModel GetById()
 		{

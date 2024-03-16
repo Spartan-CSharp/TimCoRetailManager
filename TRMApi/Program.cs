@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using TRMApi;
 using TRMApi.Data;
 
 using TRMApi.Library.DataAccess;
@@ -43,13 +44,25 @@ builder.Services.AddAuthentication(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc(
+builder.Services.AddSwaggerGen(setup => {
+	setup.SwaggerDoc(
 		"v1",
 		new OpenApiInfo
 		{
 			Title = "TimCo Retail Manager API",
 			Version = "v1"
-		}));
+		});
+	setup.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+	{
+		Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+		In = ParameterLocation.Header,
+		Name = "Authorization",
+		Type = SecuritySchemeType.Http,
+		BearerFormat = "JWT",
+		Scheme = "bearer"
+	});
+	setup.OperationFilter<AuthOperationFilter>();
+});
 
 // Personal Services
 builder.Services.AddTransient<IInventoryData, InventoryData>();

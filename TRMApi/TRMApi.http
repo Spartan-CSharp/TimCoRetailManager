@@ -1,0 +1,86 @@
+﻿# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@TRMApi_HostAddress = https://localhost:5001
+
+GET {{TRMApi_HostAddress}}/api/inventory
+Accept: application/json
+
+###
+
+POST {{TRMApi_HostAddress}}/api/inventory
+Content-Type: application/json
+
+{
+  //InventoryModel
+}
+
+###
+
+GET {{TRMApi_HostAddress}}/api/product
+Accept: application/json
+
+###
+
+POST {{TRMApi_HostAddress}}/api/sale
+Content-Type: application/json
+
+{
+  //SaleModel
+}
+
+###
+
+GET {{TRMApi_HostAddress}}/api/sale/GetSalesReport
+Accept: application/json
+
+###
+
+GET {{TRMApi_HostAddress}}/api/sale/GetTaxRate
+Accept: application/json
+
+###
+
+POST {{TRMApi_HostAddress}}/api/token?username=string&password=string&grant_type=string
+
+###
+
+GET {{TRMApi_HostAddress}}/api/user
+Accept: application/json
+
+###
+
+POST {{TRMApi_HostAddress}}/api/user/Admin/AddRole
+Content-Type: application/json
+
+{
+  //UserRolePairModel
+}
+
+###
+
+GET {{TRMApi_HostAddress}}/api/user/Admin/GetAllRoles
+Accept: application/json
+
+###
+
+GET {{TRMApi_HostAddress}}/api/user/Admin/GetAllUsers
+Accept: application/json
+
+###
+
+POST {{TRMApi_HostAddress}}/api/user/Admin/RemoveRole
+Content-Type: application/json
+
+{
+  //UserRolePairModel
+}
+
+###
+
+POST {{TRMApi_HostAddress}}/api/user/Register
+Content-Type: application/json
+
+{
+  //UserRegistrationModel
+}
+
+###

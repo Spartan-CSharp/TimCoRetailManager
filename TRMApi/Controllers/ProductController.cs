@@ -9,13 +9,14 @@ namespace TRMApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	[Authorize(Roles = "Cashier")]
+	[Authorize]
 	public class ProductController(ILogger<ProductController> logger, IProductData productData) : ControllerBase
 	{
 		private readonly ILogger<ProductController> _logger = logger;
 		private readonly IProductData _productData = productData;
 
 		[HttpGet]
+		[Authorize(Roles = "Cashier")]
 		public List<ProductModel> Get()
 		{
 			_logger.LogInformation("GET Product API Controller");
