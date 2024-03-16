@@ -2,9 +2,9 @@
 
 using Microsoft.Extensions.Configuration;
 
-using TRMDataManager.Library.Models;
+using TRMApi.Library.Models;
 
-namespace TRMDataManager.Library.DataAccess
+namespace TRMApi.Library.DataAccess
 {
 	public class SaleData(IProductData productData, ISqlDataAccess sql, IConfiguration config) : ISaleData
 	{

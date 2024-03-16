@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using TRMDataManager.Library.DataAccess;
-using TRMDataManager.Library.Models;
+using TRMApi.Library.DataAccess;
+using TRMApi.Library.Models;
 
 namespace TRMApi.Controllers
 {

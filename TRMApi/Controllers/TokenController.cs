@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using TRMApi.Data;
 
-using TRMDataManager.Library.Models;
+using TRMApi.Library.Models;
 
 namespace TRMApi.Controllers
 {

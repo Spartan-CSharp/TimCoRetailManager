@@ -1,6 +1,6 @@
-﻿using TRMDataManager.Library.Models;
+﻿using TRMApi.Library.Models;
 
-namespace TRMDataManager.Library.DataAccess
+namespace TRMApi.Library.DataAccess
 {
 	public class UserData(ISqlDataAccess sql) : IUserData
 	{

@@ -6,7 +6,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace TRMDataManager.Library.DataAccess
+namespace TRMApi.Library.DataAccess
 {
 	public class SqlDataAccess(IConfiguration config, ILogger<SqlDataAccess> logger) : IDisposable, ISqlDataAccess
 	{

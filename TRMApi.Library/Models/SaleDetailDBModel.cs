@@ -1,4 +1,4 @@
-﻿namespace TRMDataManager.Library.Models
+﻿namespace TRMApi.Library.Models
 {
 	public class SaleDetailDBModel
 	{

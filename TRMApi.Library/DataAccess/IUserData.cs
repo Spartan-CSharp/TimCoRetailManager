@@ -1,6 +1,6 @@
-﻿using TRMDataManager.Library.Models;
+﻿using TRMApi.Library.Models;
 
-namespace TRMDataManager.Library.DataAccess
+namespace TRMApi.Library.DataAccess
 {
 	public interface IUserData
 	{

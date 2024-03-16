@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 
 using TRMApi.Data;
 
-using TRMDataManager.Library.DataAccess;
+using TRMApi.Library.DataAccess;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

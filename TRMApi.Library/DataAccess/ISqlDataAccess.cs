@@ -1,4 +1,4 @@
-﻿namespace TRMDataManager.Library.DataAccess
+﻿namespace TRMApi.Library.DataAccess
 {
 	public interface ISqlDataAccess
 	{
