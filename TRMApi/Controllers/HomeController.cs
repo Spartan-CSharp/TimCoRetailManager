@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,54 +7,54 @@ using TRMApi.Models;
 
 namespace TRMApi.Controllers
 {
-	public class HomeController : Controller
+	public class HomeController(ILogger<HomeController> logger, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager) : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
-		private readonly RoleManager<IdentityRole> _roleManager;
-		private readonly UserManager<IdentityUser> _userManager;
-
-		public HomeController(ILogger<HomeController> logger, RoleManager<IdentityRole> roleManager,
-			UserManager<IdentityUser> userManager)
-		{
-			_logger = logger;
-			_roleManager = roleManager;
-			_userManager = userManager;
-		}
+		private readonly ILogger<HomeController> _logger = logger;
+		private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+		private readonly UserManager<IdentityUser> _userManager = userManager;
 
 		public IActionResult Index()
 		{
+			_logger.LogInformation("GET Home Controller, Index View, No Model");
 			return View();
 		}
 
-		public async Task<IActionResult> Privacy()
+		public async Task<IActionResult> PrivacyAsync()
 		{
-			string[] roles = { "Admin", "Manager", "Cashier" };
+			_logger.LogInformation("GET Home Controller, PrivacyAsync View, No Model");
+			_logger.LogDebug("Starting Administrator Initialization");
+			string[] roles = ["Admin", "Manager", "Cashier"];
 
-			foreach ( var role in roles )
+			foreach ( string role in roles )
 			{
-				var roleExist = await _roleManager.RoleExistsAsync(role);
+				bool roleExist = await _roleManager.RoleExistsAsync(role);
 
 				if ( roleExist == false )
 				{
-					await _roleManager.CreateAsync(new IdentityRole(role));
+					_logger.LogTrace("Role {Role} does not already exist, creating", role);
+					_ = await _roleManager.CreateAsync(new IdentityRole(role));
 				}
 			}
 
-			var user = await _userManager.FindByEmailAsync("tim@iamtimcorey.com");
+			IdentityUser? user = await _userManager.FindByEmailAsync("tim@iamtimcorey.com");
 
 			if ( user != null )
 			{
-				await _userManager.AddToRoleAsync(user, "Admin");
-				await _userManager.AddToRoleAsync(user, "Cashier");
+				_logger.LogTrace("User {UserName} found, adding Admin & Cashier Roles", user.UserName);
+				_ = await _userManager.AddToRoleAsync(user, "Admin");
+				_ = await _userManager.AddToRoleAsync(user, "Cashier");
 			}
 
+			_logger.LogDebug("Finished Administrator Initialization");
 			return View();
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+			string? requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+			_logger.LogError("GET Home Controller, Error View, Error View Model with RequestId = {RequestId}", requestId);
+			return View(new ErrorViewModel { RequestId = requestId });
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TRMDataManager.Library.Models
+﻿namespace TRMDataManager.Library.Models
 {
 	public class InventoryModel
 	{

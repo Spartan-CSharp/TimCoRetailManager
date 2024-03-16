@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.Extensions.Configuration;
 
 using Portal.Models;
 
@@ -20,7 +15,8 @@ namespace Portal.Authentication
 		private readonly AuthenticationStateProvider _authStateProvider;
 		private readonly ILocalStorageService _localStorage;
 		private readonly IConfiguration _config;
-		private readonly string authTokenStorageKey;
+		private readonly string _authTokenStorageKey;
+		private readonly JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
 		public AuthenticationService(HttpClient client,
 									 AuthenticationStateProvider authStateProvider,
@@ -31,34 +27,34 @@ namespace Portal.Authentication
 			_authStateProvider = authStateProvider;
 			_localStorage = localStorage;
 			_config = config;
-			authTokenStorageKey = _config["authTokenStorageKey"];
+			_authTokenStorageKey = _config["authTokenStorageKey"] ?? throw new InvalidOperationException("AppSetting 'authTokenStorageKey' not found.");
 		}
 
 		public async Task<AuthenticatedUserModel> Login(AuthenticationUserModel userForAuthentication)
 		{
-			var data = new FormUrlEncodedContent(new[]
-			{
+			FormUrlEncodedContent data = new FormUrlEncodedContent(
+			[
 				new KeyValuePair<string, string>("grant_type", "password"),
 				new KeyValuePair<string, string>("username", userForAuthentication.Email),
 				new KeyValuePair<string, string>("password", userForAuthentication.Password)
-			});
+			]);
 
 			string api = _config["api"] + _config["tokenEndpoint"];
-			var authResult = await _client.PostAsync(api, data);
-			var authContent = await authResult.Content.ReadAsStringAsync();
+			HttpResponseMessage authResult = await _client.PostAsync(api, data);
 
 			if ( authResult.IsSuccessStatusCode == false )
 			{
-				return null;
+				throw new Exception(authResult.ReasonPhrase);
 			}
 
-			var result = JsonSerializer.Deserialize<AuthenticatedUserModel>(
+			string authContent = await authResult.Content.ReadAsStringAsync();
+			AuthenticatedUserModel result = JsonSerializer.Deserialize<AuthenticatedUserModel>(
 				authContent,
-				new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				_options) ?? throw new Exception("Failed to authenticate user.");
 
-			await _localStorage.SetItemAsync(authTokenStorageKey, result.Access_Token);
+			await _localStorage.SetItemAsync(_authTokenStorageKey, result.Access_Token);
 
-			await ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Access_Token);
+			_ = await ((AuthStateProvider)_authStateProvider).NotifyUserAuthenticationAsync(result.Access_Token);
 
 			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Access_Token);
 
@@ -67,7 +63,7 @@ namespace Portal.Authentication
 
 		public async Task Logout()
 		{
-			await ((AuthStateProvider)_authStateProvider).NotifyUserLogout();
+			await ((AuthStateProvider)_authStateProvider).NotifyUserLogoutAsync();
 		}
 	}
 }

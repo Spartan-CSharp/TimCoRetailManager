@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -27,26 +24,26 @@ namespace TRMDesktopUI
 		{
 			Initialize();
 
-			ConventionManager.AddElementConvention<PasswordBox>(
+			_ = ConventionManager.AddElementConvention<PasswordBox>(
 			PasswordBoxHelper.BoundPasswordProperty,
 			"Password",
 			"PasswordChanged");
 		}
 
-		private IMapper ConfigureAutomapper()
+		private static IMapper ConfigureAutomapper()
 		{
-			var config = new MapperConfiguration(cfg =>
+			MapperConfiguration config = new MapperConfiguration(cfg =>
 			{
-				cfg.CreateMap<ProductModel, ProductDisplayModel>();
-				cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
+				_ = cfg.CreateMap<ProductModel, ProductDisplayModel>();
+				_ = cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
 			});
 
-			var output = config.CreateMapper();
+			IMapper output = config.CreateMapper();
 
 			return output;
 		}
 
-		private IConfiguration AddConfiguration()
+		private static IConfiguration AddConfiguration()
 		{
 			IConfigurationBuilder builder = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
@@ -62,14 +59,14 @@ namespace TRMDesktopUI
 
 		protected override void Configure()
 		{
-			_container.Instance(ConfigureAutomapper());
+			_ = _container.Instance(ConfigureAutomapper());
 
-			_container.Instance(_container)
+			_ = _container.Instance(_container)
 				.PerRequest<IProductEndpoint, ProductEndpoint>()
 				.PerRequest<IUserEndpoint, UserEndpoint>()
 				.PerRequest<ISaleEndpoint, SaleEndpoint>();
 
-			_container
+			_ = _container
 				.Singleton<IWindowManager, WindowManager>()
 				.Singleton<IEventAggregator, EventAggregator>()
 				.Singleton<ILoggedInUserModel, LoggedInUserModel>()
@@ -87,7 +84,7 @@ namespace TRMDesktopUI
 
 		protected override void OnStartup(object sender, StartupEventArgs e)
 		{
-			DisplayRootViewForAsync<ShellViewModel>();
+			_ = DisplayRootViewForAsync<ShellViewModel>();
 		}
 
 		protected override object GetInstance(Type service, string key)

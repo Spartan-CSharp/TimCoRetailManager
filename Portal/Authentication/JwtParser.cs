@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json;
 
 namespace Portal.Authentication
@@ -10,31 +7,32 @@ namespace Portal.Authentication
 	{
 		public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
 		{
-			var claims = new List<Claim>();
-			var payload = jwt.Split('.')[1];
+			List<Claim> claims = [];
+			string payload = jwt.Split('.')[1];
 
-			var jsonBytes = ParseBase64WithoutPadding(payload);
+			byte[] jsonBytes = ParseBase64WithoutPadding(payload);
 
-			var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+			Dictionary<string, object>? keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes) ?? [];
 
 			ExtractRolesFromJWT(claims, keyValuePairs);
 
-			claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
+			claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString() ?? string.Empty)));
 
 			return claims;
 		}
 
 		private static void ExtractRolesFromJWT(List<Claim> claims, Dictionary<string, object> keyValuePairs)
 		{
-			keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
+			_ = keyValuePairs.TryGetValue(ClaimTypes.Role, out object? roles);
 
 			if ( roles is not null )
 			{
-				var parsedRoles = roles.ToString().Trim().TrimStart('[').TrimEnd(']').Split(',');
+				string rolesString = roles.ToString() ?? string.Empty;
+				string[] parsedRoles = rolesString.Trim().TrimStart('[').TrimEnd(']').Split(',');
 
 				if ( parsedRoles.Length > 1 )
 				{
-					foreach ( var parsedRole in parsedRoles )
+					foreach ( string parsedRole in parsedRoles )
 					{
 						claims.Add(new Claim(ClaimTypes.Role, parsedRole.Trim('"')));
 					}
@@ -44,7 +42,7 @@ namespace Portal.Authentication
 					claims.Add(new Claim(ClaimTypes.Role, parsedRoles[0]));
 				}
 
-				keyValuePairs.Remove(ClaimTypes.Role);
+				_ = keyValuePairs.Remove(ClaimTypes.Role);
 			}
 		}
 
@@ -59,6 +57,7 @@ namespace Portal.Authentication
 					base64 += "=";
 					break;
 			}
+
 			return Convert.FromBase64String(base64);
 		}
 	}

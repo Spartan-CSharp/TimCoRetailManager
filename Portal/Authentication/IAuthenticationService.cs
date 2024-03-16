@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using Portal.Models;
+﻿using Portal.Models;
 
 namespace Portal.Authentication
 {

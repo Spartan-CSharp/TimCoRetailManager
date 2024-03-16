@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using TRMDesktopUI.Library.Models;
+﻿using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.Library.Api
 {

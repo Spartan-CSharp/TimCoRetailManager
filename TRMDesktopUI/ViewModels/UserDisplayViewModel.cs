@@ -1,8 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 using Caliburn.Micro;
@@ -12,13 +9,18 @@ using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
 {
-	public class UserDisplayViewModel : Screen
+	public class UserDisplayViewModel(StatusInfoViewModel status, IWindowManager window, IUserEndpoint userEndpoint) : Screen
 	{
-		private readonly StatusInfoViewModel _status;
-		private readonly IWindowManager _window;
-		private readonly IUserEndpoint _userEndpoint;
-
-		BindingList<UserModel> _users;
+		private readonly StatusInfoViewModel _status = status;
+		private readonly IWindowManager _window = window;
+		private readonly IUserEndpoint _userEndpoint = userEndpoint;
+		private BindingList<UserModel> _users = [];
+		private UserModel? _selectedUser;
+		private string? _selectedUserRole;
+		private string? _selectedAvailableRole;
+		private string? _selectedUserName;
+		private BindingList<string> _userRoles = [];
+		private BindingList<string> _availableRoles = [];
 
 		public BindingList<UserModel> Users
 		{
@@ -33,9 +35,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private UserModel _selectedUser;
-
-		public UserModel SelectedUser
+		public UserModel? SelectedUser
 		{
 			get
 			{
@@ -44,17 +44,15 @@ namespace TRMDesktopUI.ViewModels
 			set
 			{
 				_selectedUser = value;
-				SelectedUserName = value.Email;
-				UserRoles = new BindingList<string>(value.Roles.Select(x => x.Value).ToList());
+				SelectedUserName = value?.Email;
+				UserRoles = value is not null ? new BindingList<string>(value.Roles.Select(x => x.Value).ToList()) : ([]);
 				//TODO - Pull this out into a method/event
-				LoadRoles();
+				_ = LoadRolesAsync();
 				NotifyOfPropertyChange(() => SelectedUser);
 			}
 		}
 
-		private string _selectedUserRole;
-
-		public string SelectedUserRole
+		public string? SelectedUserRole
 		{
 			get
 			{
@@ -68,9 +66,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private string _selectedAvailableRole;
-
-		public string SelectedAvailableRole
+		public string? SelectedAvailableRole
 		{
 			get
 			{
@@ -84,9 +80,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private string _selectedUserName;
-
-		public string SelectedUserName
+		public string? SelectedUserName
 		{
 			get
 			{
@@ -98,8 +92,6 @@ namespace TRMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => SelectedUserName);
 			}
 		}
-
-		private BindingList<string> _userRoles = new();
 
 		public BindingList<string> UserRoles
 		{
@@ -114,8 +106,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private BindingList<string> _availableRoles = new();
-
 		public BindingList<string> AvailableRoles
 		{
 			get
@@ -129,11 +119,20 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public UserDisplayViewModel(StatusInfoViewModel status, IWindowManager window, IUserEndpoint userEndpoint)
+		public bool CanAddSelectedRole
 		{
-			_status = status;
-			_window = window;
-			_userEndpoint = userEndpoint;
+			get
+			{
+				return SelectedUser is not null && SelectedAvailableRole is not null;
+			}
+		}
+
+		public bool CanRemoveSelectedRole
+		{
+			get
+			{
+				return SelectedUser is not null && SelectedUserRole is not null;
+			}
 		}
 
 		protected override async void OnViewLoaded(object view)
@@ -141,7 +140,7 @@ namespace TRMDesktopUI.ViewModels
 			base.OnViewLoaded(view);
 			try
 			{
-				await LoadUsers();
+				await LoadUsersAsync();
 			}
 			catch ( Exception ex )
 			{
@@ -165,19 +164,19 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private async Task LoadUsers()
+		private async Task LoadUsersAsync()
 		{
-			var userList = await _userEndpoint.GetAll();
+			List<UserModel> userList = await _userEndpoint.GetAll();
 			Users = new BindingList<UserModel>(userList);
 		}
 
-		private async Task LoadRoles()
+		private async Task LoadRolesAsync()
 		{
-			var roles = await _userEndpoint.GetAllRoles();
+			Dictionary<string, string> roles = await _userEndpoint.GetAllRoles();
 
 			AvailableRoles.Clear();
 
-			foreach ( var role in roles )
+			foreach ( KeyValuePair<string, string> role in roles )
 			{
 				if ( UserRoles.IndexOf(role.Value) < 0 )
 				{
@@ -186,50 +185,26 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public bool CanAddSelectedRole
+		public async void AddSelectedRoleAsync()
 		{
-			get
+			if ( SelectedUser is not null && SelectedAvailableRole is not null )
 			{
-				if ( SelectedUser is null || SelectedAvailableRole is null )
-				{
-					return false;
-				}
-				else
-				{
-					return true;
-				}
+				await _userEndpoint.AddUserToRole(SelectedUser.Id, SelectedAvailableRole);
+
+				UserRoles.Add(SelectedAvailableRole);
+				_ = AvailableRoles.Remove(SelectedAvailableRole);
 			}
 		}
 
-		public async void AddSelectedRole()
+		public async void RemoveSelectedRoleAsync()
 		{
-			await _userEndpoint.AddUserToRole(SelectedUser.Id, SelectedAvailableRole);
-
-			UserRoles.Add(SelectedAvailableRole);
-			AvailableRoles.Remove(SelectedAvailableRole);
-		}
-
-		public bool CanRemoveSelectedRole
-		{
-			get
+			if ( SelectedUser is not null && SelectedUserRole is not null )
 			{
-				if ( SelectedUser is null || SelectedUserRole is null )
-				{
-					return false;
-				}
-				else
-				{
-					return true;
-				}
+				await _userEndpoint.RemoveUserFromRole(SelectedUser.Id, SelectedUserRole);
+
+				AvailableRoles.Add(SelectedUserRole);
+				_ = UserRoles.Remove(SelectedUserRole);
 			}
-		}
-
-		public async void RemoveSelectedRole()
-		{
-			await _userEndpoint.RemoveUserFromRole(SelectedUser.Id, SelectedUserRole);
-
-			AvailableRoles.Add(SelectedUserRole);
-			UserRoles.Remove(SelectedUserRole);
 		}
 	}
 }

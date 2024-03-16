@@ -1,10 +1,7 @@
-using System.Configuration;
 using System.Text;
 
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -12,55 +9,47 @@ using TRMApi.Data;
 
 using TRMDataManager.Library.DataAccess;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddCors(policy =>
-{
-	policy.AddPolicy("OpenCorsPolicy", opt =>
+builder.Services.AddCors(policy => policy.AddPolicy("OpenCorsPolicy", opt =>
 		opt.AllowAnyOrigin()
 		.AllowAnyHeader()
-		.AllowAnyMethod());
-});
+		.AllowAnyMethod()));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 	.AddRoles<IdentityRole>()
 	.AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+string securityKey = builder.Configuration.GetValue<string>("Secrets:SecurityKey") ?? throw new InvalidOperationException("AppSetting 'Secrets:SecurityKey' not found.");
 builder.Services.AddAuthentication(options =>
 {
 	options.DefaultAuthenticateScheme = "JwtBearer";
 	options.DefaultChallengeScheme = "JwtBearer";
 })
-.AddJwtBearer("JwtBearer", jwtBearerOptions =>
-	{
-		jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-		{
-			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Secrets:SecurityKey"))),
-			ValidateIssuer = false,
-			ValidateAudience = false,
-			ValidateLifetime = true,
-			ClockSkew = TimeSpan.FromMinutes(5)
-		};
-	});
+.AddJwtBearer("JwtBearer", jwtBearerOptions => jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+{
+	ValidateIssuerSigningKey = true,
+	IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
+	ValidateIssuer = false,
+	ValidateAudience = false,
+	ValidateLifetime = true,
+	ClockSkew = TimeSpan.FromMinutes(5)
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(setup =>
-{
-	setup.SwaggerDoc(
+builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc(
 		"v1",
 		new OpenApiInfo
 		{
 			Title = "TimCo Retail Manager API",
 			Version = "v1"
-		});
-});
+		}));
 
 // Personal Services
 builder.Services.AddTransient<IInventoryData, InventoryData>();
@@ -69,24 +58,21 @@ builder.Services.AddTransient<ISaleData, SaleData>();
 builder.Services.AddTransient<IUserData, UserData>();
 builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if ( app.Environment.IsDevelopment() )
 {
-	app.UseDeveloperExceptionPage();
-	app.UseMigrationsEndPoint();
-	app.UseSwagger();
-	app.UseSwaggerUI(x =>
-	{
-		x.SwaggerEndpoint("/swagger/v1/swagger.json", "TimCo API v1");
-	});
+	_ = app.UseDeveloperExceptionPage();
+	_ = app.UseMigrationsEndPoint();
+	_ = app.UseSwagger();
+	_ = app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "TimCo API v1"));
 }
 else
 {
-	app.UseExceptionHandler("/Home/Error");
+	_ = app.UseExceptionHandler("/Home/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+	_ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();

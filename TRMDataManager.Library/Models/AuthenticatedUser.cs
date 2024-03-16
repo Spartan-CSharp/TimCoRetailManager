@@ -1,6 +1,6 @@
-﻿namespace Portal.Models
+﻿namespace TRMDataManager.Library.Models
 {
-	public class AuthenticatedUserModel
+	public class AuthenticatedUser
 	{
 		public string Access_Token { get; set; } = string.Empty;
 		public string UserName { get; set; } = string.Empty;

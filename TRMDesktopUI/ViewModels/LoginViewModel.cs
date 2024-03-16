@@ -1,26 +1,17 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 
 using TRMDesktopUI.EventModels;
 using TRMDesktopUI.Library.Api;
 
 namespace TRMDesktopUI.ViewModels
 {
-	public class LoginViewModel : Screen
+	public class LoginViewModel(IAPIHelper apiHelper, IEventAggregator events) : Screen
 	{
+		private readonly IAPIHelper _apiHelper = apiHelper;
+		private readonly IEventAggregator _events = events;
 		private string _userName = "tim@iamtimcorey.com";
 		private string _password = "Pwd12345.";
-		private readonly IAPIHelper _apiHelper;
-		private readonly IEventAggregator _events;
-
-		public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
-		{
-			_apiHelper = apiHelper;
-			_events = events;
-		}
+		private string _errorMessage = string.Empty;
 
 		public string UserName
 		{
@@ -65,8 +56,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private string _errorMessage;
-
 		public string ErrorMessage
 		{
 			get
@@ -80,7 +69,6 @@ namespace TRMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => ErrorMessage);
 			}
 		}
-
 
 		public bool CanLogIn
 		{
@@ -97,12 +85,12 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public async Task LogIn()
+		public async Task LogInAsync()
 		{
 			try
 			{
 				ErrorMessage = "";
-				var result = await _apiHelper.Authenticate(UserName, Password);
+				Library.Models.AuthenticatedUser result = await _apiHelper.Authenticate(UserName, Password);
 
 				// Capture more information about the user
 				await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
@@ -114,6 +102,5 @@ namespace TRMDesktopUI.ViewModels
 				ErrorMessage = ex.Message;
 			}
 		}
-
 	}
 }

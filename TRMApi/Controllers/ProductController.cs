@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using TRMDataManager.Library.DataAccess;
@@ -11,19 +9,17 @@ namespace TRMApi.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize(Roles = "Cashier")]
-	public class ProductController : ControllerBase
+	public class ProductController(ILogger<ProductController> logger, IProductData productData) : ControllerBase
 	{
-		private readonly IProductData _productData;
-
-		public ProductController(IProductData productData)
-		{
-			_productData = productData;
-		}
+		private readonly ILogger<ProductController> _logger = logger;
+		private readonly IProductData _productData = productData;
 
 		[HttpGet]
 		public List<ProductModel> Get()
 		{
-			var products = _productData.GetProducts();
+			_logger.LogInformation("GET Product API Controller");
+			List<ProductModel> products = _productData.GetProducts();
+			_logger.LogDebug("GetProducts Returned {ProductCount} Products", products.Count);
 			return products;
 		}
 	}

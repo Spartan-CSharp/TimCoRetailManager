@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 
 using TRMDesktopUI.EventModels;
 using TRMDesktopUI.Library.Api;
@@ -15,9 +12,7 @@ namespace TRMDesktopUI.ViewModels
 		private readonly ILoggedInUserModel _user;
 		private readonly IAPIHelper _apiHelper;
 
-		public ShellViewModel(IEventAggregator events,
-							  ILoggedInUserModel user,
-							  IAPIHelper apiHelper)
+		public ShellViewModel(IEventAggregator events, ILoggedInUserModel user, IAPIHelper apiHelper)
 		{
 			_events = events;
 			_user = user;
@@ -25,7 +20,7 @@ namespace TRMDesktopUI.ViewModels
 
 			_events.SubscribeOnPublishedThread(this);
 
-			ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
+			_ = ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
 		}
 
 		public bool IsLoggedIn
@@ -53,20 +48,20 @@ namespace TRMDesktopUI.ViewModels
 
 		public void ExitApplication()
 		{
-			TryCloseAsync();
+			_ = TryCloseAsync();
 		}
 
-		public async Task UserManagement()
+		public async Task UserManagementAsync()
 		{
 			await ActivateItemAsync(IoC.Get<UserDisplayViewModel>(), new CancellationToken());
 		}
 
-		public async Task LogIn()
+		public async Task LogInAsync()
 		{
 			await ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
 		}
 
-		public async Task LogOut()
+		public async Task LogOutAsync()
 		{
 			_user.ResetUserModel();
 			_apiHelper.LogOffUser();

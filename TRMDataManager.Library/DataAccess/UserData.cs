@@ -1,21 +1,14 @@
-﻿using System.Collections.Generic;
-
-using TRMDataManager.Library.Models;
+﻿using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-	public class UserData : IUserData
+	public class UserData(ISqlDataAccess sql) : IUserData
 	{
-		private readonly ISqlDataAccess _sql;
+		private readonly ISqlDataAccess _sql = sql;
 
-		public UserData(ISqlDataAccess sql)
+		public List<UserModel> GetUserById(string id)
 		{
-			_sql = sql;
-		}
-
-		public List<UserModel> GetUserById(string Id)
-		{
-			var output = _sql.LoadData<UserModel, dynamic>("dbo.spUserLookup", new { Id }, "TRMData");
+			List<UserModel> output = _sql.LoadData<UserModel, dynamic>("dbo.spUserLookup", new { id }, "TRMData");
 
 			return output;
 		}

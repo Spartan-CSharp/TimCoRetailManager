@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-using TRMDesktopUI.Library.Models;
+﻿using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.Library.Api
 {
-	public class UserEndpoint : IUserEndpoint
+	public class UserEndpoint(IAPIHelper apiHelper) : IUserEndpoint
 	{
-		private readonly IAPIHelper _apiHelper;
-
-		public UserEndpoint(IAPIHelper apiHelper)
-		{
-			_apiHelper = apiHelper;
-		}
+		private readonly IAPIHelper _apiHelper = apiHelper;
 
 		public async Task<List<UserModel>> GetAll()
 		{
@@ -22,7 +12,7 @@ namespace TRMDesktopUI.Library.Api
 			{
 				if ( response.IsSuccessStatusCode )
 				{
-					var result = await response.Content.ReadAsAsync<List<UserModel>>();
+					List<UserModel> result = await response.Content.ReadAsAsync<List<UserModel>>();
 					return result;
 				}
 				else
@@ -57,7 +47,7 @@ namespace TRMDesktopUI.Library.Api
 			{
 				if ( response.IsSuccessStatusCode )
 				{
-					var result = await response.Content.ReadAsAsync<Dictionary<string, string>>();
+					Dictionary<string, string> result = await response.Content.ReadAsAsync<Dictionary<string, string>>();
 					return result;
 				}
 				else

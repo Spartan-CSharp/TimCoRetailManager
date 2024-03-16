@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
+﻿using System.Configuration;
 
 using Microsoft.Extensions.Configuration;
 
@@ -9,31 +6,24 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-	public class SaleData : ISaleData
+	public class SaleData(IProductData productData, ISqlDataAccess sql, IConfiguration config) : ISaleData
 	{
-		private readonly IProductData _productData;
-		private readonly ISqlDataAccess _sql;
-		private readonly IConfiguration _config;
-
-		public SaleData(IProductData productData, ISqlDataAccess sql, IConfiguration config)
-		{
-			_productData = productData;
-			_sql = sql;
-			_config = config;
-		}
+		private readonly IProductData _productData = productData;
+		private readonly ISqlDataAccess _sql = sql;
+		private readonly IConfiguration _config = config;
 
 		public decimal GetTaxRate()
 		{
-			string rateText = _config.GetValue<string>("TaxRate");
+			string rateText = _config.GetValue<string>("TaxRate") ?? throw new InvalidOperationException("AppSetting 'TaxRate' not found.");
 
-			bool IsValidTaxRate = Decimal.TryParse(rateText, out decimal output);
+			bool isValidTaxRate = decimal.TryParse(rateText, out decimal output);
 
-			if ( IsValidTaxRate == false )
+			if ( isValidTaxRate == false )
 			{
 				throw new ConfigurationErrorsException("The tax rate is not set up properly");
 			}
 
-			output = output / 100;
+			output /= 100;
 
 			return output;
 		}
@@ -42,30 +32,25 @@ namespace TRMDataManager.Library.DataAccess
 		{
 			//TODO: Make this SOLID/DRY/Better
 			// Start filling in the sale detail models we will save to the database
-			List<SaleDetailDBModel> details = new List<SaleDetailDBModel>();
-			var taxRate = GetTaxRate();
+			List<SaleDetailDBModel> details = [];
+			decimal taxRate = GetTaxRate();
 
-			foreach ( var item in saleInfo.SaleDetails )
+			foreach ( SaleDetailModel item in saleInfo.SaleDetails )
 			{
-				var detail = new SaleDetailDBModel
+				SaleDetailDBModel detail = new SaleDetailDBModel
 				{
 					ProductId = item.ProductId,
 					Quantity = item.Quantity
 				};
 
 				// Get the information about this product
-				var productInfo = _productData.GetProductById(detail.ProductId);
+				ProductModel productInfo = _productData.GetProductById(detail.ProductId) ?? throw new Exception($"The product Id of {detail.ProductId} could not be found in the database.");
 
-				if ( productInfo == null )
-				{
-					throw new Exception($"The product Id of {detail.ProductId} could not be found in the database.");
-				}
-
-				detail.PurchasePrice = (productInfo.RetailPrice * detail.Quantity);
+				detail.PurchasePrice = productInfo.RetailPrice * detail.Quantity;
 
 				if ( productInfo.IsTaxable )
 				{
-					detail.Tax = (detail.PurchasePrice * taxRate);
+					detail.Tax = detail.PurchasePrice * taxRate;
 				}
 
 				details.Add(detail);
@@ -92,7 +77,7 @@ namespace TRMDataManager.Library.DataAccess
 				sale.Id = _sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }).FirstOrDefault();
 
 				// Finish filling in the sale detail models
-				foreach ( var item in details )
+				foreach ( SaleDetailDBModel item in details )
 				{
 					item.SaleId = sale.Id;
 					// Save the sale detail models
@@ -106,12 +91,11 @@ namespace TRMDataManager.Library.DataAccess
 				_sql.RollbackTransaction();
 				throw;
 			}
-
 		}
 
 		public List<SaleReportModel> GetSaleReport()
 		{
-			var output = _sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
+			List<SaleReportModel> output = _sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
 
 			return output;
 		}

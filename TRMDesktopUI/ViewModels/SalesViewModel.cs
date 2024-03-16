@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 using AutoMapper;
@@ -18,64 +14,19 @@ using TRMDesktopUI.Models;
 
 namespace TRMDesktopUI.ViewModels
 {
-	public class SalesViewModel : Screen
+	public class SalesViewModel(IProductEndpoint productEndpoint, IConfiguration config, ISaleEndpoint saleEndpoint, IMapper mapper, StatusInfoViewModel status, IWindowManager window) : Screen
 	{
-		private readonly IProductEndpoint _productEndpoint;
-		private readonly IConfiguration _config;
-		private readonly ISaleEndpoint _saleEndpoint;
-		private readonly IMapper _mapper;
-		private readonly StatusInfoViewModel _status;
-		private readonly IWindowManager _window;
-
-		public SalesViewModel(IProductEndpoint productEndpoint, IConfiguration config,
-			ISaleEndpoint saleEndpoint, IMapper mapper, StatusInfoViewModel status,
-			IWindowManager window)
-		{
-			_productEndpoint = productEndpoint;
-			_config = config;
-			_saleEndpoint = saleEndpoint;
-			_mapper = mapper;
-			_status = status;
-			_window = window;
-		}
-
-		protected override async void OnViewLoaded(object view)
-		{
-			base.OnViewLoaded(view);
-			try
-			{
-				await LoadProducts();
-			}
-			catch ( Exception ex )
-			{
-				dynamic settings = new ExpandoObject();
-				settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-				settings.ResizeMode = ResizeMode.NoResize;
-				settings.Title = "System Error";
-
-				if ( ex.Message == "Unauthorized" )
-				{
-					_status.UpdateMessage("Unauthorized Access", "You do not have permission to interact with the Sales Form.");
-					await _window.ShowDialogAsync(_status, null, settings);
-				}
-				else
-				{
-					_status.UpdateMessage("Fatal Exception", ex.Message);
-					await _window.ShowDialogAsync(_status, null, settings);
-				}
-
-				await TryCloseAsync();
-			}
-		}
-
-		private async Task LoadProducts()
-		{
-			var productList = await _productEndpoint.GetAll();
-			var products = _mapper.Map<List<ProductDisplayModel>>(productList);
-			Products = new BindingList<ProductDisplayModel>(products);
-		}
-
-		private BindingList<ProductDisplayModel> _products;
+		private readonly IProductEndpoint _productEndpoint = productEndpoint;
+		private readonly IConfiguration _config = config;
+		private readonly ISaleEndpoint _saleEndpoint = saleEndpoint;
+		private readonly IMapper _mapper = mapper;
+		private readonly StatusInfoViewModel _status = status;
+		private readonly IWindowManager _window = window;
+		private BindingList<ProductDisplayModel> _products = [];
+		private ProductDisplayModel? _selectedProduct;
+		private CartItemDisplayModel? _selectedCartItem;
+		private BindingList<CartItemDisplayModel> _cart = [];
+		private int _itemQuantity = 1;
 
 		public BindingList<ProductDisplayModel> Products
 		{
@@ -90,9 +41,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private ProductDisplayModel _selectedProduct;
-
-		public ProductDisplayModel SelectedProduct
+		public ProductDisplayModel? SelectedProduct
 		{
 			get
 			{
@@ -106,21 +55,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private async Task ResetSalesViewModel()
-		{
-			Cart = new BindingList<CartItemDisplayModel>();
-			// TODO - Add clearing the selectedCartItem if it does not do it itself
-			await LoadProducts();
-
-			NotifyOfPropertyChange(() => SubTotal);
-			NotifyOfPropertyChange(() => Tax);
-			NotifyOfPropertyChange(() => Total);
-			NotifyOfPropertyChange(() => CanCheckOut);
-		}
-
-		private CartItemDisplayModel _selectedCartItem;
-
-		public CartItemDisplayModel SelectedCartItem
+		public CartItemDisplayModel? SelectedCartItem
 		{
 			get
 			{
@@ -134,8 +69,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private BindingList<CartItemDisplayModel> _cart = new();
-
 		public BindingList<CartItemDisplayModel> Cart
 		{
 			get
@@ -148,8 +81,6 @@ namespace TRMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Cart);
 			}
 		}
-
-		private int _itemQuantity = 1;
 
 		public int ItemQuantity
 		{
@@ -173,38 +104,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private decimal CalculateSubTotal()
-		{
-			decimal subTotal = 0;
-
-			foreach ( var item in Cart )
-			{
-				subTotal += (item.Product.RetailPrice * item.QuantityInCart);
-			}
-
-			return subTotal;
-		}
-
-		private decimal CalculateTax()
-		{
-			decimal taxAmount = 0;
-			decimal taxRate = _config.GetValue<decimal>("taxRate") / 100;
-
-			taxAmount = Cart
-				.Where(x => x.Product.IsTaxable)
-				.Sum(x => x.Product.RetailPrice * x.QuantityInCart * taxRate);
-
-			//foreach (var item in Cart)
-			//{
-			//    if (item.Product.IsTaxable)
-			//    {
-			//        taxAmount += (item.Product.RetailPrice * item.QuantityInCart * taxRate);
-			//    }
-			//}
-
-			return taxAmount;
-		}
-
 		public string Tax
 		{
 			get
@@ -221,7 +120,6 @@ namespace TRMDesktopUI.ViewModels
 				return total.ToString("C");
 			}
 		}
-
 
 		public bool CanAddToCart
 		{
@@ -240,32 +138,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public void AddToCart()
-		{
-			CartItemDisplayModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
-
-			if ( existingItem != null )
-			{
-				existingItem.QuantityInCart += ItemQuantity;
-			}
-			else
-			{
-				CartItemDisplayModel item = new()
-				{
-					Product = SelectedProduct,
-					QuantityInCart = ItemQuantity
-				};
-				Cart.Add(item);
-			}
-
-			SelectedProduct.QuantityInStock -= ItemQuantity;
-			ItemQuantity = 1;
-			NotifyOfPropertyChange(() => SubTotal);
-			NotifyOfPropertyChange(() => Tax);
-			NotifyOfPropertyChange(() => Total);
-			NotifyOfPropertyChange(() => CanCheckOut);
-		}
-
 		public bool CanRemoveFromCart
 		{
 			get
@@ -280,26 +152,6 @@ namespace TRMDesktopUI.ViewModels
 
 				return output;
 			}
-		}
-
-		public void RemoveFromCart()
-		{
-			SelectedCartItem.Product.QuantityInStock += 1;
-
-			if ( SelectedCartItem.QuantityInCart > 1 )
-			{
-				SelectedCartItem.QuantityInCart -= 1;
-			}
-			else
-			{
-				Cart.Remove(SelectedCartItem);
-			}
-
-			NotifyOfPropertyChange(() => SubTotal);
-			NotifyOfPropertyChange(() => Tax);
-			NotifyOfPropertyChange(() => Total);
-			NotifyOfPropertyChange(() => CanCheckOut);
-			NotifyOfPropertyChange(() => CanAddToCart);
 		}
 
 		public bool CanCheckOut
@@ -318,12 +170,136 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public async Task CheckOut()
+		protected override async void OnViewLoaded(object view)
+		{
+			base.OnViewLoaded(view);
+			try
+			{
+				await LoadProductsAsync();
+			}
+			catch ( Exception ex )
+			{
+				dynamic settings = new ExpandoObject();
+				settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+				settings.ResizeMode = ResizeMode.NoResize;
+				settings.Title = "System Error";
+
+				if ( ex.Message == "Unauthorized" )
+				{
+					_status.UpdateMessage("Unauthorized Access", "You do not have permission to interact with the Sales Form.");
+					await _window.ShowDialogAsync(_status, null, settings);
+				}
+				else
+				{
+					_status.UpdateMessage("Fatal Exception", ex.Message);
+					await _window.ShowDialogAsync(_status, null, settings);
+				}
+
+				await TryCloseAsync();
+			}
+		}
+
+		private async Task LoadProductsAsync()
+		{
+			List<ProductModel> productList = await _productEndpoint.GetAll();
+			List<ProductDisplayModel> products = _mapper.Map<List<ProductDisplayModel>>(productList);
+			Products = new BindingList<ProductDisplayModel>(products);
+		}
+
+		private async Task ResetSalesViewModelAsync()
+		{
+			Cart = [];
+			// TODO - Add clearing the selectedCartItem if it does not do it itself
+			await LoadProductsAsync();
+
+			NotifyOfPropertyChange(() => SubTotal);
+			NotifyOfPropertyChange(() => Tax);
+			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckOut);
+		}
+
+		private decimal CalculateSubTotal()
+		{
+			decimal subTotal = 0;
+
+			foreach ( CartItemDisplayModel item in Cart )
+			{
+				subTotal += item.Product.RetailPrice * item.QuantityInCart;
+			}
+
+			return subTotal;
+		}
+
+		private decimal CalculateTax()
+		{
+			decimal taxAmount = 0;
+			decimal taxRate = _config.GetValue<decimal>("taxRate") / 100;
+
+			taxAmount = Cart
+				.Where(x => x.Product.IsTaxable)
+				.Sum(x => x.Product.RetailPrice * x.QuantityInCart * taxRate);
+
+			return taxAmount;
+		}
+
+		public void AddToCart()
+		{
+			if ( SelectedProduct is not null )
+			{
+				CartItemDisplayModel? existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
+
+				if ( existingItem != null )
+				{
+					existingItem.QuantityInCart += ItemQuantity;
+				}
+				else
+				{
+					CartItemDisplayModel item = new()
+					{
+						Product = SelectedProduct,
+						QuantityInCart = ItemQuantity
+					};
+					Cart.Add(item);
+				}
+
+				SelectedProduct.QuantityInStock -= ItemQuantity;
+				ItemQuantity = 1;
+				NotifyOfPropertyChange(() => SubTotal);
+				NotifyOfPropertyChange(() => Tax);
+				NotifyOfPropertyChange(() => Total);
+				NotifyOfPropertyChange(() => CanCheckOut);
+			}
+		}
+
+		public void RemoveFromCart()
+		{
+			if ( SelectedCartItem is not null )
+			{
+				SelectedCartItem.Product.QuantityInStock += 1;
+
+				if ( SelectedCartItem.QuantityInCart > 1 )
+				{
+					SelectedCartItem.QuantityInCart -= 1;
+				}
+				else
+				{
+					_ = Cart.Remove(SelectedCartItem);
+				}
+
+				NotifyOfPropertyChange(() => SubTotal);
+				NotifyOfPropertyChange(() => Tax);
+				NotifyOfPropertyChange(() => Total);
+				NotifyOfPropertyChange(() => CanCheckOut);
+				NotifyOfPropertyChange(() => CanAddToCart);
+			}
+		}
+
+		public async Task CheckOutAsync()
 		{
 			// Create a SaleModel and post to the API
 			SaleModel sale = new();
 
-			foreach ( var item in Cart )
+			foreach ( CartItemDisplayModel item in Cart )
 			{
 				sale.SaleDetails.Add(new SaleDetailModel
 				{
@@ -334,7 +310,7 @@ namespace TRMDesktopUI.ViewModels
 
 			await _saleEndpoint.PostSale(sale);
 
-			await ResetSalesViewModel();
+			await ResetSalesViewModelAsync();
 		}
 	}
 }

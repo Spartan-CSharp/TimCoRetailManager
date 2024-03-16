@@ -54,14 +54,14 @@
 </div>
 
 @code {
-	private List<ProductModel> products;
-	private string api;
+	private List<ProductModel>? products;
+	private string api = string.Empty;
 	private const string ProductListName = "productList";
 	private const string ProductCacheDate = "productCacheDate";
 
 	protected override async Task OnInitializedAsync()
 	{
-		api = config.GetValue<string>("api");
+		api = config.GetValue<string>("api") ?? throw new InvalidOperationException("AppSetting 'api' not found.");
 
 		products = await localStorage.GetItemAsync<List<ProductModel>>(ProductListName);
 		DateTime? cacheDate = await localStorage.GetItemAsync<DateTime?>(ProductCacheDate);

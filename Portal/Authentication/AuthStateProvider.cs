@@ -1,49 +1,33 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Configuration;
 
 using TRMDesktopUI.Library.Api;
 
 namespace Portal.Authentication
 {
-	public class AuthStateProvider : AuthenticationStateProvider
+	public class AuthStateProvider(HttpClient httpClient, ILocalStorageService localStorage, IConfiguration config, IAPIHelper apiHelper) : AuthenticationStateProvider
 	{
-		private readonly HttpClient _httpClient;
-		private readonly ILocalStorageService _localStorage;
-		private readonly IConfiguration _config;
-		private readonly IAPIHelper _apiHelper;
-		private readonly AuthenticationState _anonymous;
-
-		public AuthStateProvider(HttpClient httpClient,
-								 ILocalStorageService localStorage,
-								 IConfiguration config,
-								 IAPIHelper apiHelper)
-		{
-			_httpClient = httpClient;
-			_localStorage = localStorage;
-			_config = config;
-			_apiHelper = apiHelper;
-			_anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-		}
+		private readonly HttpClient _httpClient = httpClient;
+		private readonly ILocalStorageService _localStorage = localStorage;
+		private readonly IConfiguration _config = config;
+		private readonly IAPIHelper _apiHelper = apiHelper;
+		private readonly AuthenticationState _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			string authTokenStorageKey = _config["authTokenStorageKey"];
-			var token = await _localStorage.GetItemAsync<string>(authTokenStorageKey);
+			string authTokenStorageKey = _config["authTokenStorageKey"] ?? throw new InvalidOperationException("AppSetting 'authTokenStorageKey' not found.");
+			string? token = await _localStorage.GetItemAsync<string>(authTokenStorageKey);
 
 			if ( string.IsNullOrWhiteSpace(token) )
 			{
 				return _anonymous;
 			}
 
-			bool isAuthetcated = await NotifyUserAuthentication(token);
+			bool isAuthetcated = await NotifyUserAuthenticationAsync(token);
 
 			if ( isAuthetcated == false )
 			{
@@ -58,7 +42,7 @@ namespace Portal.Authentication
 					"jwtAuthType")));
 		}
 
-		public async Task<bool> NotifyUserAuthentication(string token)
+		public async Task<bool> NotifyUserAuthenticationAsync(string token)
 		{
 			bool isAuthenticatedOutput;
 			Task<AuthenticationState> authState;
@@ -74,7 +58,7 @@ namespace Portal.Authentication
 
 			try
 			{
-				var authenticatedUser = new ClaimsPrincipal(
+				ClaimsPrincipal authenticatedUser = new ClaimsPrincipal(
 					new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token),
 					"jwtAuthType"));
 				authState = Task.FromResult(new AuthenticationState(authenticatedUser));
@@ -84,18 +68,18 @@ namespace Portal.Authentication
 			catch ( Exception ex )
 			{
 				Console.WriteLine(ex);
-				await NotifyUserLogout();
+				await NotifyUserLogoutAsync();
 				isAuthenticatedOutput = false;
 			}
 
 			return isAuthenticatedOutput;
 		}
 
-		public async Task NotifyUserLogout()
+		public async Task NotifyUserLogoutAsync()
 		{
-			string authTokenStorageKey = _config["authTokenStorageKey"];
+			string authTokenStorageKey = _config["authTokenStorageKey"] ?? throw new InvalidOperationException("AppSetting 'authTokenStorageKey' not found.");
 			await _localStorage.RemoveItemAsync(authTokenStorageKey);
-			var authState = Task.FromResult(_anonymous);
+			Task<AuthenticationState> authState = Task.FromResult(_anonymous);
 			_apiHelper.LogOffUser();
 			_httpClient.DefaultRequestHeaders.Authorization = null;
 			NotifyAuthenticationStateChanged(authState);

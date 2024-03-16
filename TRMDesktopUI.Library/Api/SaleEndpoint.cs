@@ -1,19 +1,10 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-using TRMDesktopUI.Library.Models;
+﻿using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.Library.Api
 {
-	public class SaleEndpoint : ISaleEndpoint
+	public class SaleEndpoint(IAPIHelper apiHelper) : ISaleEndpoint
 	{
-		private readonly IAPIHelper _apiHelper;
-
-		public SaleEndpoint(IAPIHelper apiHelper)
-		{
-			_apiHelper = apiHelper;
-		}
+		private readonly IAPIHelper _apiHelper = apiHelper;
 
 		public async Task PostSale(SaleModel sale)
 		{

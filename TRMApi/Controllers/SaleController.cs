@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,21 +11,18 @@ namespace TRMApi.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize]
-	public class SaleController : ControllerBase
+	public class SaleController(ILogger<SaleController> logger, ISaleData saleData) : ControllerBase
 	{
-		private readonly ISaleData _saleData;
-
-		public SaleController(ISaleData saleData)
-		{
-			_saleData = saleData;
-		}
+		private readonly ILogger<SaleController> _logger = logger;
+		private readonly ISaleData _saleData = saleData;
 
 		[Authorize(Roles = "Cashier")]
 		[HttpPost]
 		public void Post(SaleModel sale)
 		{
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+			_logger.LogInformation("POST Sale API Controller, Sale Model with {SaleDetailCount} Sale Detail Lines.", sale.SaleDetails.Count);
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+			_logger.LogDebug("Cashier UserId is {UserId}", userId);
 			_saleData.SaveSale(sale, userId);
 		}
 
@@ -35,7 +31,10 @@ namespace TRMApi.Controllers
 		[HttpGet]
 		public List<SaleReportModel> GetSalesReport()
 		{
-			return _saleData.GetSaleReport();
+			_logger.LogInformation("GET Sale API Controller, GetSalesReport Route");
+			List<SaleReportModel> output = _saleData.GetSaleReport();
+			_logger.LogDebug("GetSalesReport Returned {NumberOfReports} Sale Report Models", output.Count);
+			return output;
 		}
 
 		[AllowAnonymous]
@@ -43,7 +42,10 @@ namespace TRMApi.Controllers
 		[HttpGet]
 		public decimal GetTaxRate()
 		{
-			return _saleData.GetTaxRate();
+			_logger.LogInformation("GET Sale API Controller, GetTaxRate Route");
+			decimal output = _saleData.GetTaxRate();
+			_logger.LogDebug("GetTaxRate Returned Tax Rate of {TaxRate}", output);
+			return output;
 		}
 	}
 }
