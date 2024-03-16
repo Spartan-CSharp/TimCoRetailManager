@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 
-namespace Portal.Authentication
+namespace TRMPortal.Authentication
 {
 	public static class JwtParser
 	{

@@ -5,9 +5,9 @@ using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;
 
-using Portal.Models;
+using TRMPortal.Models;
 
-namespace Portal.Authentication
+namespace TRMPortal.Authentication
 {
 	public class AuthenticationService : IAuthenticationService
 	{

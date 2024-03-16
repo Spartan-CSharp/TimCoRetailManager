@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-using Portal;
-using Portal.Authentication;
+using TRMPortal;
+using TRMPortal.Authentication;
 
 using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.Library.Models;

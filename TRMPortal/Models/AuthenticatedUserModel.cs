@@ -1,4 +1,4 @@
-﻿namespace Portal.Models
+﻿namespace TRMPortal.Models
 {
 	public class AuthenticatedUserModel
 	{

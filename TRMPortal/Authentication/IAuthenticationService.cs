@@ -1,6 +1,6 @@
-﻿using Portal.Models;
+﻿using TRMPortal.Models;
 
-namespace Portal.Authentication
+namespace TRMPortal.Authentication
 {
 	public interface IAuthenticationService
 	{

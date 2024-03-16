@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 using TRMDesktopUI.Library.Api;
 
-namespace Portal.Authentication
+namespace TRMPortal.Authentication
 {
 	public class AuthStateProvider(HttpClient httpClient, ILocalStorageService localStorage, IConfiguration config, IAPIHelper apiHelper) : AuthenticationStateProvider
 	{
