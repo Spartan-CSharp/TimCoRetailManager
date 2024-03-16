@@ -1,10 +1,10 @@
 ﻿using Caliburn.Micro;
 
-using TRMDesktopUI.EventModels;
-using TRMDesktopUI.Library.Api;
-using TRMDesktopUI.Library.Models;
+using TRMUI.EventModels;
+using TRMUI.Library.Api;
+using TRMUI.Library.Models;
 
-namespace TRMDesktopUI.ViewModels
+namespace TRMUI.ViewModels
 {
 	public class ShellViewModel : Conductor<object>, IHandle<LogOnEvent>
 	{

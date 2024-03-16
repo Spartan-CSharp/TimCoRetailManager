@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 
 using TRMApi.Library.Models;
 
+using TRMCommon.Library.Models;
+
 namespace TRMApi.Library.DataAccess
 {
 	public class SaleData(IProductData productData, ISqlDataAccess sql, IConfiguration config) : ISaleData

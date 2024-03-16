@@ -74,7 +74,7 @@
 		{
 			await UserEndpoint.CreateUser(model);
 
-			AuthenticatedUserModel result = await AuthService.Login(new() { Email = model.EmailAddress, Password = model.Password });
+			AuthenticatedUser result = await AuthService.Login(new() { Email = model.EmailAddress, Password = model.Password });
 
 			if ( result is not null )
 			{

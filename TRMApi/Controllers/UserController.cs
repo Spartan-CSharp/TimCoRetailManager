@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using TRMApi.Data;
+using TRMApi.Library.DataAccess;
 using TRMApi.Models;
 
-using TRMApi.Library.DataAccess;
-using TRMApi.Library.Models;
+using TRMCommon.Library.Models;
 
 namespace TRMApi.Controllers
 {

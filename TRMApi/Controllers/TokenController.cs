@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using TRMApi.Data;
 
-using TRMApi.Library.Models;
+using TRMCommon.Library.Authentication;
 
 namespace TRMApi.Controllers
 {
@@ -90,12 +90,16 @@ namespace TRMApi.Controllers
 								r.Name
 							};
 
+				output.Issued = DateTime.Now;
+				output.Expires = DateTime.Now.AddDays(1);
+				output.ExpiresIn = (int)output.Expires.Subtract(output.Issued).TotalSeconds;
+
 				List<Claim> claims =
 					[
 						new Claim(ClaimTypes.Name, username),
 						new Claim(ClaimTypes.NameIdentifier, user.Id),
-						new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-						new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString())
+						new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(output.Issued).ToUnixTimeSeconds().ToString()),
+						new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(output.Expires).ToUnixTimeSeconds().ToString())
 					];
 
 				foreach ( var role in roles )
@@ -113,7 +117,7 @@ namespace TRMApi.Controllers
 					new JwtPayload(claims));
 
 				output.Access_Token = new JwtSecurityTokenHandler().WriteToken(token);
-				_logger.LogTrace("Token Generated for User {UserName}", username);
+				_logger.LogTrace("Token Generated for User {UserName} valid from {Issued} to {Expires}", username, output.Issued, output.Expires);
 			}
 			else
 			{

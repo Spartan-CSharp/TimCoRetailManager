@@ -1,4 +1,4 @@
-﻿namespace TRMDesktopUI.Library.Models
+﻿namespace TRMUI.Library.Models
 {
 	public class LoggedInUserModel : ILoggedInUserModel
 	{

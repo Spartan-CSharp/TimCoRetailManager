@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace TRMDesktopUI.Library.Models
+namespace TRMUI.Library.Models
 {
 	public class CreateUserModel
 	{

@@ -13,7 +13,7 @@
 		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\TRMDesktopUI.Library\TRMDesktopUI.Library.csproj" />
+	  <ProjectReference Include="..\TRMPortal.Library\TRMPortal.Library.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />

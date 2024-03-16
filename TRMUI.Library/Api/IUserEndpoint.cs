@@ -1,10 +1,10 @@
-﻿using TRMDesktopUI.Library.Models;
+﻿using TRMUI.Library.Models;
 
-namespace TRMDesktopUI.Library.Api
+namespace TRMUI.Library.Api
 {
 	public interface IUserEndpoint
 	{
-		Task<List<UserModel>> GetAll();
+		Task<List<UserModelWithRoles>> GetAll();
 		Task<Dictionary<string, string>> GetAllRoles();
 		Task AddUserToRole(string userId, string roleName);
 		Task RemoveUserFromRole(string userId, string roleName);

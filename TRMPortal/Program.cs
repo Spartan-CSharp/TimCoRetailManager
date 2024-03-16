@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TRMPortal;
 using TRMPortal.Authentication;
 
-using TRMDesktopUI.Library.Api;
-using TRMDesktopUI.Library.Models;
+using TRMUI.Library.Api;
+using TRMUI.Library.Models;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

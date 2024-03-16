@@ -1,6 +1,6 @@
-﻿namespace TRMDesktopUI.Library.Models
+﻿namespace TRMUI.Library.Models
 {
-	public class UserModel
+	public class UserModelWithRoles
 	{
 		public string Id { get; set; } = string.Empty;
 		public string Email { get; set; } = string.Empty;

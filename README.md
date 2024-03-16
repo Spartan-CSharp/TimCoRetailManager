@@ -8,7 +8,7 @@ At the end of the Build a TimCo Retail Manager App Course Series, Tim Corey invi
 - [x] Import the code as it was at the end of the Build a TimCo Retail Manager App Course Series
 - [x] Update the .editorconfig file my idiosyncratic preferences and run code cleanup
 - [x] Update all the projects from .NET 5.0 to .NET 8.0
-- [ ] Refactoring phase 1: create a common library for components common between the API and the UIs
+- [x] Refactoring phase 1: create a common library for components common between the API and the UIs
 - [ ] Refactoring phase 2: make code DRY and better implement SOLID where the added complexity does not outweigh the benefits
 - [ ] Functionality phase 1: add/fix/tweak the various little things we left behind during the course that Tim never got back to doing
 - [ ] Functionality phase 2: add new API calls to set up starter data and add setup instructions to the README.md file

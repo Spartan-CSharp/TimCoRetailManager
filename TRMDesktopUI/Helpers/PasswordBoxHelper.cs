@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace TRMDesktopUI.Helpers
+namespace TRMUI.Helpers
 {
 	public static class PasswordBoxHelper
 	{

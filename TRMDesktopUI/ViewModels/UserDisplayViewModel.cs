@@ -4,25 +4,25 @@ using System.Windows;
 
 using Caliburn.Micro;
 
-using TRMDesktopUI.Library.Api;
-using TRMDesktopUI.Library.Models;
+using TRMUI.Library.Api;
+using TRMUI.Library.Models;
 
-namespace TRMDesktopUI.ViewModels
+namespace TRMUI.ViewModels
 {
 	public class UserDisplayViewModel(StatusInfoViewModel status, IWindowManager window, IUserEndpoint userEndpoint) : Screen
 	{
 		private readonly StatusInfoViewModel _status = status;
 		private readonly IWindowManager _window = window;
 		private readonly IUserEndpoint _userEndpoint = userEndpoint;
-		private BindingList<UserModel> _users = [];
-		private UserModel? _selectedUser;
+		private BindingList<UserModelWithRoles> _users = [];
+		private UserModelWithRoles? _selectedUser;
 		private string? _selectedUserRole;
 		private string? _selectedAvailableRole;
 		private string? _selectedUserName;
 		private BindingList<string> _userRoles = [];
 		private BindingList<string> _availableRoles = [];
 
-		public BindingList<UserModel> Users
+		public BindingList<UserModelWithRoles> Users
 		{
 			get
 			{
@@ -35,7 +35,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public UserModel? SelectedUser
+		public UserModelWithRoles? SelectedUser
 		{
 			get
 			{
@@ -166,8 +166,8 @@ namespace TRMDesktopUI.ViewModels
 
 		private async Task LoadUsersAsync()
 		{
-			List<UserModel> userList = await _userEndpoint.GetAll();
-			Users = new BindingList<UserModel>(userList);
+			List<UserModelWithRoles> userList = await _userEndpoint.GetAll();
+			Users = new BindingList<UserModelWithRoles>(userList);
 		}
 
 		private async Task LoadRolesAsync()

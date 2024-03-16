@@ -1,4 +1,4 @@
-﻿using TRMApi.Library.Models;
+﻿using TRMCommon.Library.Models;
 
 namespace TRMApi.Library.DataAccess
 {

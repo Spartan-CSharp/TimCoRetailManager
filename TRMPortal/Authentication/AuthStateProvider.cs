@@ -5,7 +5,7 @@ using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;
 
-using TRMDesktopUI.Library.Api;
+using TRMUI.Library.Api;
 
 namespace TRMPortal.Authentication
 {

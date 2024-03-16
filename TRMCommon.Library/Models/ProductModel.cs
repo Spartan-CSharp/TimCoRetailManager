@@ -1,4 +1,4 @@
-﻿namespace TRMDesktopUI.Library.Models
+﻿namespace TRMCommon.Library.Models
 {
 	public class ProductModel
 	{
@@ -8,6 +8,8 @@
 		public decimal RetailPrice { get; set; }
 		public int QuantityInStock { get; set; }
 		public bool IsTaxable { get; set; }
-		public string ProductImage { get; set; } = string.Empty;
+		public string? ProductImage { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastModified { get; set; }
 	}
 }

@@ -1,10 +1,12 @@
-﻿using TRMPortal.Models;
+﻿using TRMCommon.Library.Authentication;
+
+using TRMPortal.Models;
 
 namespace TRMPortal.Authentication
 {
 	public interface IAuthenticationService
 	{
-		Task<AuthenticatedUserModel> Login(AuthenticationUserModel userForAuthentication);
+		Task<AuthenticatedUser> Login(AuthenticationUserModel userForAuthentication);
 		Task Logout();
 	}
 }

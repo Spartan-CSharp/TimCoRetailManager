@@ -8,11 +8,11 @@ using Caliburn.Micro;
 
 using Microsoft.Extensions.Configuration;
 
-using TRMDesktopUI.Library.Api;
-using TRMDesktopUI.Library.Models;
-using TRMDesktopUI.Models;
+using TRMCommon.Library.Models;
+using TRMUI.Library.Api;
+using TRMUI.Models;
 
-namespace TRMDesktopUI.ViewModels
+namespace TRMUI.ViewModels
 {
 	public class SalesViewModel(IProductEndpoint productEndpoint, IConfiguration config, ISaleEndpoint saleEndpoint, IMapper mapper, StatusInfoViewModel status, IWindowManager window) : Screen
 	{

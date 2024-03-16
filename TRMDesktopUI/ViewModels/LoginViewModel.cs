@@ -1,9 +1,11 @@
 ﻿using Caliburn.Micro;
 
-using TRMDesktopUI.EventModels;
-using TRMDesktopUI.Library.Api;
+using TRMCommon.Library.Authentication;
 
-namespace TRMDesktopUI.ViewModels
+using TRMUI.EventModels;
+using TRMUI.Library.Api;
+
+namespace TRMUI.ViewModels
 {
 	public class LoginViewModel(IAPIHelper apiHelper, IEventAggregator events) : Screen
 	{
@@ -90,7 +92,7 @@ namespace TRMDesktopUI.ViewModels
 			try
 			{
 				ErrorMessage = "";
-				Library.Models.AuthenticatedUser result = await _apiHelper.Authenticate(UserName, Password);
+				AuthenticatedUser result = await _apiHelper.Authenticate(UserName, Password);
 
 				// Capture more information about the user
 				await _apiHelper.GetLoggedInUserInfo(result.Access_Token);

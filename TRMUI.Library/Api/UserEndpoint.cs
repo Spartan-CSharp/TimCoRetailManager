@@ -1,18 +1,18 @@
-﻿using TRMDesktopUI.Library.Models;
+﻿using TRMUI.Library.Models;
 
-namespace TRMDesktopUI.Library.Api
+namespace TRMUI.Library.Api
 {
 	public class UserEndpoint(IAPIHelper apiHelper) : IUserEndpoint
 	{
 		private readonly IAPIHelper _apiHelper = apiHelper;
 
-		public async Task<List<UserModel>> GetAll()
+		public async Task<List<UserModelWithRoles>> GetAll()
 		{
 			using ( HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("/api/User/Admin/GetAllUsers") )
 			{
 				if ( response.IsSuccessStatusCode )
 				{
-					List<UserModel> result = await response.Content.ReadAsAsync<List<UserModel>>();
+					List<UserModelWithRoles> result = await response.Content.ReadAsAsync<List<UserModelWithRoles>>();
 					return result;
 				}
 				else

@@ -1,6 +1,6 @@
-﻿using TRMDesktopUI.Library.Models;
+﻿using TRMCommon.Library.Models;
 
-namespace TRMDesktopUI.Library.Api
+namespace TRMUI.Library.Api
 {
 	public class SaleEndpoint(IAPIHelper apiHelper) : ISaleEndpoint
 	{

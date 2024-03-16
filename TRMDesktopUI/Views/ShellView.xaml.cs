@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace TRMDesktopUI.Views
+namespace TRMUI.Views
 {
 	/// <summary>
 	/// Interaction logic for ShellView.xaml

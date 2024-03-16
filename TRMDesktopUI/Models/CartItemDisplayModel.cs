@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace TRMDesktopUI.Models
+namespace TRMUI.Models
 {
 	public class CartItemDisplayModel : INotifyPropertyChanged
 	{

@@ -1,6 +1,6 @@
-﻿using TRMDesktopUI.Library.Models;
+﻿using TRMCommon.Library.Authentication;
 
-namespace TRMDesktopUI.Library.Api
+namespace TRMUI.Library.Api
 {
 	public interface IAPIHelper
 	{

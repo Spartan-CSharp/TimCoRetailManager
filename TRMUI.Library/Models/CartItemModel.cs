@@ -1,4 +1,6 @@
-﻿namespace TRMDesktopUI.Library.Models
+﻿using TRMCommon.Library.Models;
+
+namespace TRMUI.Library.Models
 {
 	public class CartItemModel
 	{

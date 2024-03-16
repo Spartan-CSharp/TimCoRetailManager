@@ -1,4 +1,4 @@
-﻿namespace TRMApi.Library.Models
+﻿namespace TRMCommon.Library.Models
 {
 	public class UserModel
 	{

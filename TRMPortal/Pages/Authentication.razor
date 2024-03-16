@@ -64,7 +64,7 @@
 	{
 		showAuthenticationError = false;
 
-		AuthenticatedUserModel result = await AuthService.Login(model);
+		AuthenticatedUser result = await AuthService.Login(model);
 
 		if ( result is not null )
 		{

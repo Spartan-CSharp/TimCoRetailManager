@@ -5,6 +5,8 @@ using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;
 
+using TRMCommon.Library.Authentication;
+
 using TRMPortal.Models;
 
 namespace TRMPortal.Authentication
@@ -30,7 +32,7 @@ namespace TRMPortal.Authentication
 			_authTokenStorageKey = _config["authTokenStorageKey"] ?? throw new InvalidOperationException("AppSetting 'authTokenStorageKey' not found.");
 		}
 
-		public async Task<AuthenticatedUserModel> Login(AuthenticationUserModel userForAuthentication)
+		public async Task<AuthenticatedUser> Login(AuthenticationUserModel userForAuthentication)
 		{
 			FormUrlEncodedContent data = new FormUrlEncodedContent(
 			[
@@ -48,7 +50,7 @@ namespace TRMPortal.Authentication
 			}
 
 			string authContent = await authResult.Content.ReadAsStringAsync();
-			AuthenticatedUserModel result = JsonSerializer.Deserialize<AuthenticatedUserModel>(
+			AuthenticatedUser result = JsonSerializer.Deserialize<AuthenticatedUser>(
 				authContent,
 				_options) ?? throw new Exception("Failed to authenticate user.");
 

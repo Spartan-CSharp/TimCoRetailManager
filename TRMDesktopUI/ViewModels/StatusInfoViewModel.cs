@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
 
-namespace TRMDesktopUI.ViewModels
+namespace TRMUI.ViewModels
 {
 	public class StatusInfoViewModel : Screen
 	{

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using TRMApi.Library.DataAccess;
 using TRMApi.Library.Models;
 
+using TRMCommon.Library.Models;
+
 namespace TRMApi.Controllers
 {
 	[Route("api/[controller]")]

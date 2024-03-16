@@ -8,13 +8,14 @@ using Caliburn.Micro;
 
 using Microsoft.Extensions.Configuration;
 
-using TRMDesktopUI.Helpers;
-using TRMDesktopUI.Library.Api;
-using TRMDesktopUI.Library.Models;
-using TRMDesktopUI.Models;
-using TRMDesktopUI.ViewModels;
+using TRMCommon.Library.Models;
+using TRMUI.Helpers;
+using TRMUI.Library.Api;
+using TRMUI.Library.Models;
+using TRMUI.Models;
+using TRMUI.ViewModels;
 
-namespace TRMDesktopUI
+namespace TRMUI
 {
 	public class Bootstrapper : BootstrapperBase
 	{

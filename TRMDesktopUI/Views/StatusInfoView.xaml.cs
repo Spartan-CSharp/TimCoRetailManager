@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace TRMDesktopUI.Views
+namespace TRMUI.Views
 {
 	/// <summary>
 	/// Interaction logic for StatusInfoView.xaml

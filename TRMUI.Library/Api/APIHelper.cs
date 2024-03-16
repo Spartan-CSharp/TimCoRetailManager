@@ -2,9 +2,11 @@
 
 using Microsoft.Extensions.Configuration;
 
-using TRMDesktopUI.Library.Models;
+using TRMCommon.Library.Authentication;
 
-namespace TRMDesktopUI.Library.Api
+using TRMUI.Library.Models;
+
+namespace TRMUI.Library.Api
 {
 	public class APIHelper : IAPIHelper
 	{
