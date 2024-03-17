@@ -18,9 +18,10 @@ namespace TRMApi.Controllers
 		private readonly ILogger<SaleController> _logger = logger;
 		private readonly ISaleData _saleData = saleData;
 
+		// POST api/Sale
 		[Authorize(Roles = "Cashier")]
 		[HttpPost]
-		public void Post(SaleModel sale)
+		public void Post([FromBody] SaleModel sale)
 		{
 			_logger.LogInformation("POST Sale API Controller, Sale Model with {SaleDetailCount} Sale Detail Lines.", sale.SaleDetails.Count);
 			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
@@ -28,8 +29,9 @@ namespace TRMApi.Controllers
 			_saleData.SaveSale(sale, userId);
 		}
 
-		[Authorize(Roles = "Admin,Manager")]
+		// GET api/Sale/GetSalesReport
 		[Route("GetSalesReport")]
+		[Authorize(Roles = "Admin,Manager")]
 		[HttpGet]
 		public List<SaleReportModel> GetSalesReport()
 		{
@@ -39,8 +41,9 @@ namespace TRMApi.Controllers
 			return output;
 		}
 
-		[AllowAnonymous]
+		// GET api/Sale/GetTaxRate
 		[Route("GetTaxRate")]
+		[AllowAnonymous]
 		[HttpGet]
 		public decimal GetTaxRate()
 		{

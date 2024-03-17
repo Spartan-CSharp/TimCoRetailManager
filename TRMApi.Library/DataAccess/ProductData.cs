@@ -19,5 +19,10 @@ namespace TRMApi.Library.DataAccess
 
 			return output is null ? throw new ApplicationException($"Product with ID {productId} Not Found") : output;
 		}
+
+		public void CreateProduct(ProductModel product)
+		{
+			_sql.SaveData("dbo.spProduct_Insert", new { product.ProductName, product.Description, product.RetailPrice, product.QuantityInStock, product.IsTaxable, product.ProductImage }, "TRMData");
+		}
 	}
 }

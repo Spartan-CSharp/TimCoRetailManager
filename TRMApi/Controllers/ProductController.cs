@@ -15,8 +15,9 @@ namespace TRMApi.Controllers
 		private readonly ILogger<ProductController> _logger = logger;
 		private readonly IProductData _productData = productData;
 
-		[HttpGet]
+		// GET api/Product
 		[Authorize(Roles = "Cashier")]
+		[HttpGet]
 		public List<ProductModel> Get()
 		{
 			_logger.LogInformation("GET Product API Controller");

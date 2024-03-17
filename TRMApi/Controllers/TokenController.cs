@@ -22,11 +22,12 @@ namespace TRMApi.Controllers
 		private readonly UserManager<IdentityUser> _userManager = userManager;
 		private readonly IConfiguration _config = config;
 
+		// POST api/Token
 		[AllowAnonymous]
 		[HttpPost]
-		public async Task<IActionResult> CreateAsync(string username, string password, string grant_type)
+		public async Task<IActionResult> CreateAsync([FromForm] string username, [FromForm] string password, [FromForm] string grant_type)
 		{
-			_logger.LogInformation("GET Token API Controller with Grant Type = {GrantType}, User Name = {UserName}, and Password Is Null or Whitespace = {PasswordEmpty}", grant_type, username, string.IsNullOrWhiteSpace(password));
+			_logger.LogInformation("POST Token API Controller with Grant Type = {GrantType}, User Name = {UserName}, and Password Is Null or Whitespace = {PasswordEmpty}", grant_type, username, string.IsNullOrWhiteSpace(password));
 			bool isValidLogin = await IsValidUsernameAndPasswordAsync(username, password);
 			_logger.LogDebug("IsValidUserameAndPasswordAsync Returned {IsValidLogin}", isValidLogin);
 
@@ -35,7 +36,7 @@ namespace TRMApi.Controllers
 				AuthenticatedUser authUser = await GenerateTokenAsync(username);
 				_logger.LogDebug("GenerateTokenAsync Returned the following authUser for User {UserName}: {AccessToken}", authUser.UserName, authUser.Access_Token);
 				ObjectResult output = new ObjectResult(authUser);
-				_logger.LogDebug("GET Token API Controller Returning ObjectResult");
+				_logger.LogDebug("POST Token API Controller Returning ObjectResult");
 				return output;
 			}
 			else
@@ -45,7 +46,7 @@ namespace TRMApi.Controllers
 					Message = "Invalid Login Attempt"
 				};
 				UnauthorizedObjectResult output = Unauthorized(loginError);
-				_logger.LogDebug("GET Token API Controller Returning Unauthorized with Message = {Message}", loginError.Message);
+				_logger.LogDebug("POST Token API Controller Returning Unauthorized with Message = {Message}", loginError.Message);
 				return output;
 			}
 		}

@@ -15,6 +15,7 @@ namespace TRMApi.Controllers
 		private readonly ILogger<InventoryController> _logger = logger;
 		private readonly IInventoryData _inventoryData = inventoryData;
 
+		// GET api/Inventory
 		[Authorize(Roles = "Manager,Admin")]
 		[HttpGet]
 		public List<InventoryModel> Get()
@@ -25,9 +26,10 @@ namespace TRMApi.Controllers
 			return output;
 		}
 
+		// POST api/Inventory
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
-		public void Post(InventoryModel item)
+		public void Post([FromBody] InventoryModel item)
 		{
 			_logger.LogInformation("POST Inventory API Controller, Inventory Model for ProductId = {ProductId}, Purchased {Quantity} units at {UnitPrice} on {PurchaseDate}.", item.ProductId, item.Quantity, item.PurchasePrice, item.PurchaseDate);
 			_inventoryData.SaveInventoryRecord(item);

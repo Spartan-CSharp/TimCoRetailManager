@@ -28,9 +28,10 @@ namespace TRMApi.Controllers
 			string EmailAddress,
 			string Password);
 
+		// GET api/User
 		[Authorize]
 		[HttpGet]
-		public UserModel GetById()
+		public UserModel GetLoggedInUser()
 		{
 			_logger.LogInformation("GET User API Controller");
 			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
@@ -40,10 +41,11 @@ namespace TRMApi.Controllers
 			return output;
 		}
 
-		[HttpPost]
+		// POST api/User/Register
 		[Route("Register")]
 		[AllowAnonymous]
-		public async Task<IActionResult> RegisterAsync(UserRegistrationModel user)
+		[HttpPost]
+		public async Task<IActionResult> RegisterAsync([FromBody] UserRegistrationModel user)
 		{
 			BadRequestObjectResult output;
 			_logger.LogInformation("POST User API Controller, Register Route, UserRegistrationModel for {FirstName} {LastName} with Email {EmailAddress}, Model State is Valid: {ModelValid}", user.FirstName, user.LastName, user.EmailAddress, ModelState.IsValid);
@@ -111,9 +113,10 @@ namespace TRMApi.Controllers
 			return output;
 		}
 
+		// GET api/User/Admin/GetAllUsers
+		[Route("Admin/GetAllUsers")]
 		[Authorize(Roles = "Admin")]
 		[HttpGet]
-		[Route("Admin/GetAllUsers")]
 		public List<ApplicationUserModel> GetAllUsers()
 		{
 			_logger.LogInformation("GET User API Controller, Admin/GetAllUsers Route");
@@ -146,9 +149,10 @@ namespace TRMApi.Controllers
 			return output;
 		}
 
+		// GET api/User/Admin/GetAllRoles
+		[Route("Admin/GetAllRoles")]
 		[Authorize(Roles = "Admin")]
 		[HttpGet]
-		[Route("Admin/GetAllRoles")]
 		public Dictionary<string, string> GetAllRoles()
 		{
 			_logger.LogInformation("GET User API Controller, Admin/GetAllRolesRoute");
@@ -157,10 +161,11 @@ namespace TRMApi.Controllers
 			return roles;
 		}
 
+		// POST api/User/Admin/AddRole
+		[Route("Admin/AddRole")]
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
-		[Route("Admin/AddRole")]
-		public async Task AddARoleAsync(UserRolePairModel pairing)
+		public async Task AddARoleAsync([FromBody] UserRolePairModel pairing)
 		{
 			_logger.LogInformation("GET User API Controller, Admin/AddARole Route with UserRolePaidModel UserId = {User} and RoleName = {Role}", pairing.UserId, pairing.RoleName);
 			string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
@@ -174,10 +179,11 @@ namespace TRMApi.Controllers
 			}
 		}
 
+		// POST api/User/Admin/RemoveRole
+		[Route("Admin/RemoveRole")]
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
-		[Route("Admin/RemoveRole")]
-		public async Task RemoveARoleAsync(UserRolePairModel pairing)
+		public async Task RemoveARoleAsync([FromBody] UserRolePairModel pairing)
 		{
 			_logger.LogInformation("GET User API Controller, Admin/RemoveRole Route with UserRolePaidModel UserId = {User} and RoleName = {Role}", pairing.UserId, pairing.RoleName);
 			string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;

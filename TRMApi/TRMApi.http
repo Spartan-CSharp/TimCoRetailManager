@@ -39,7 +39,11 @@ Accept: application/json
 
 ###
 
-POST {{TRMApi_HostAddress}}/api/token?username=string&password=string&grant_type=string
+POST {{TRMApi_HostAddress}}/api/sampledata
+
+###
+
+POST {{TRMApi_HostAddress}}/api/token
 
 ###
 
